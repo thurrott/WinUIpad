@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window
+    x:Class="WinUIpad4.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:WinUIpad4"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d" Title="WinUIpad4">
+
+    <Window.SystemBackdrop>
+        <MicaBackdrop />
+    </Window.SystemBackdrop>
+
+    <Grid Name="OuterGrid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid Name="MainAppGrid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <TabView Name="MyTabs" Grid.Row="0" CloseButtonOverlayMode="OnPointerOver" HorizontalAlignment="Stretch" VerticalAlignment="Center" CanReorderTabs="True" CanDragTabs="True" TabCloseRequested="MyTabs_TabCloseRequested" AddTabButtonClick="MyTabs_AddTabButtonClick">
+                <TabView.TabStripHeader>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="32" />
+                        </Grid.ColumnDefinitions>
+                        <Image Grid.Column="0" Source="/Assets/t-pride-icon.png" Width="16" Height="16" Margin="7,7,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Grid>
+                </TabView.TabStripHeader>
+                <TabView.TabStripFooter>
+                    <Grid x:Name="CustomDragRegion" Background="Transparent" />
+                </TabView.TabStripFooter>
+            </TabView>
+            <Grid Name="MenuBarGrid" Grid.Row="1" HorizontalAlignment="Stretch" >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <MenuBar Grid.Row="0" Grid.Column="0">
+                    <MenuBarItem Title="File" AccessKey="F">
+                        <MenuFlyoutItem Name="NewMenu" Text="New" Click="NewMenu_Click" AccessKey="N">
+                            <MenuFlyoutItem.KeyboardAccelerators>
+                                <KeyboardAccelerator Key="N" Modifiers="Control"/>
+                            </MenuFlyoutItem.KeyboardAccelerators>
+                        </MenuFlyoutItem>
+                        <MenuFlyoutItem Name="OpenMenu" Text="Open" Click="OpenMenu_Click">
+                            <MenuFlyoutItem.KeyboardAccelerators>
+                                <KeyboardAccelerator Key="O" Modifiers="Control"/>
+                            </MenuFlyoutItem.KeyboardAccelerators>
+                        </MenuFlyoutItem>
+                        <MenuFlyoutSeparator/>
+                        <MenuFlyoutItem Name="SaveMenu" Text="Save" Click="SaveMenu_Click">
+                            <MenuFlyoutItem.KeyboardAccelerators>
+                                <KeyboardAccelerator Key="S" Modifiers="Control"/>
+                            </MenuFlyoutItem.KeyboardAccelerators>
+                        </MenuFlyoutItem>
+                        <MenuFlyoutSeparator/>
+                        <RadioMenuFlyoutItem Name="AutoSaveMenu" Text="Auto save" Click="AutoSaveMenu_Click" />
+                        <MenuFlyoutSeparator/>
+                        <MenuFlyoutItem Name="CloseTabMenu" Text="Close tab">
+                            <MenuFlyoutItem.KeyboardAccelerators>
+                                <KeyboardAccelerator Key="W" Modifiers="Control"/>
+                            </MenuFlyoutItem.KeyboardAccelerators>
+                        </MenuFlyoutItem>
+                        <MenuFlyoutItem Name="CloseWindowMenu" Text="Close window">
+                            <MenuFlyoutItem.KeyboardAccelerators>
+                                <KeyboardAccelerator Key="W" Modifiers="Control, Shift"/>
+                            </MenuFlyoutItem.KeyboardAccelerators>
+                        </MenuFlyoutItem>
+                        <MenuFlyoutSeparator/>
+                        <MenuFlyoutItem Name="ExitMenu" Text="Exit" Click="ExitMenu_Click" />
+                    </MenuBarItem>
+                    <MenuBarItem Title="Edit" AccessKey="E">
+                    </MenuBarItem>
+                    <MenuBarItem Title="View"  AccessKey="V">
+                    </MenuBarItem>
+                </MenuBar>
+                <InfoBadge Grid.Row="0" Grid.Column="2" Style="{ThemeResource SuccessIconInfoBadgeStyle}" Background="Green" x:Name="DocumentIsSavedBadge" Visibility="{x:Bind docs[0].DocumentIsSaved, Mode=OneWay}" Margin="10,0,0,0" />
+                <InfoBadge Grid.Row="0" Grid.Column="3" Style="{ThemeResource CautionIconInfoBadgeStyle}" Background="Orange" x:Name="TextHasChangedBadge" Visibility="{x:Bind docs[0].TextHasChanged, Mode=OneWay}" Margin="10,0,0,0" />
+                <Button Grid.Row="0" Grid.Column="4" Name="SettingsButton" BorderThickness="0" Background="Transparent" HorizontalAlignment="Right" FlowDirection="RightToLeft" FontFamily="Segoe Fluent Icons" Content="&#xE713;" Margin="0,0,5,0" ></Button>
+            </Grid>
+            
+            <TextBox Name="TextBox1" Grid.Row="2" Grid.Column="0" BorderThickness="0,1,0,.5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" AllowDrop="True" AcceptsReturn="True" TextWrapping="NoWrap" TextChanging="TextBox1_TextChanging" 
+                     Text="{x:Bind docs[0].Contents, Mode=TwoWay}"  />
+            
+            <Grid Name="StatusBarGrid" Grid.Row="3" Height="32">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="60" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="60" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Grid.Row="0" Text="Document is saved:" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10,0,10,0" />
+                <TextBlock Grid.Column="1" Grid.Row="0" Name="DocumentIsSavedText" Text="{x:Bind docs[0].DocumentIsSaved, Mode=OneWay}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,25,0" />
+                <TextBlock Grid.Column="2" Grid.Row="0" Text="Text has changed:" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,10,0" />
+                <TextBlock Grid.Column="3" Grid.Row="0" Name="TextHasChangedText" Text="{x:Bind docs[0].TextHasChanged, Mode=OneWay}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,25,0" />
+                <TextBlock Grid.Column="4" Grid.Row="0" Text="Document name:" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,10,0" />
+                <TextBlock Grid.Column="5" Grid.Row="0" Name="DocumentNameText" Text="{x:Bind docs[0].FileName, Mode=OneWay}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,25,0" />
+            </Grid>
+        </Grid>
+    </Grid>
+</Window>
