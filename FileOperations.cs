@@ -108,7 +108,9 @@ namespace WinUIpad4
             }
             else
             {
-                return SaveAs(mw, d).Result;
+                // return SaveAs(mw, d).Result;
+                // This should called SaveNewDocument now
+                return true;
             }
         }
 
@@ -135,6 +137,26 @@ namespace WinUIpad4
                 // User cancelled the save operation
                 return false;
             }
+        }
+
+        public async Task<bool> SaveNewDocument(nint hwnd, Document d)
+        {
+            var savePicker = new Windows.Storage.Pickers.FileSavePicker();
+            savePicker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.ComputerFolder;
+            savePicker.SuggestedFileName = "Untitled.txt";
+            savePicker.FileTypeChoices.Add("Text file (*.txt)", [".txt"]);
+            WinRT.Interop.InitializeWithWindow.Initialize(savePicker, hwnd);
+            StorageFile file = await savePicker.PickSaveFileAsync();
+            if (file != null)
+            {
+                await Windows.Storage.FileIO.WriteTextAsync(file, d.Contents);
+                d.FileName = file.Path;
+                d.DocumentIsSaved = true;
+                d.TextHasChanged = false;
+                return true;
+            }
+            // User cancelled the save operation
+            else return false;
         }
     }
 }

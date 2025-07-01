@@ -80,13 +80,23 @@ namespace WinUIpad4
             TextBox1.Focus(FocusState.Programmatic);
         }
 
-        private void SaveMenu_Click(object sender, RoutedEventArgs e)
+        private async void SaveMenu_Click(object sender, RoutedEventArgs e)
         {
-            // https://github.com/microsoft/Windows-universal-samples/tree/main/Samples/FilePicker
-            // https://learn.microsoft.com/en-us/windows/apps/develop/files/dotnet-files
-            FileOperations fo = new FileOperations(); 
+            FileOperations fo = new FileOperations();
             if (docs[MyTabs.SelectedIndex] != null)
-                fo.SaveDocument(this, docs[MyTabs.SelectedIndex]);
+            {
+                if (docs[MyTabs.SelectedIndex].DocumentIsSaved)
+                {
+                    // Save existing document
+                    fo.SaveDocument(this, docs[MyTabs.SelectedIndex]);
+                }
+                else
+                {
+                    // Save as a new document
+                    var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
+                    await fo.SaveNewDocument(hwnd, docs[MyTabs.SelectedIndex]);
+                }
+            }
         }
 
         private void AutoSaveMenu_Click(object sender, RoutedEventArgs e)
@@ -124,6 +134,13 @@ namespace WinUIpad4
         private void MyTabs_AddTabButtonClick(TabView sender, object args)
         {
 
+        }
+
+        private async void SettingsButton_Click(object sender, RoutedEventArgs e)
+        {
+            var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
+            FileOperations fo = new FileOperations();
+            await fo.SaveNewDocument(hwnd, docs[MyTabs.SelectedIndex]);
         }
     }
 
